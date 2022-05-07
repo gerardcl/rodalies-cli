@@ -2,7 +2,7 @@
 
 Timetables of the trains of Rodalies de la Generalitat de Catalunya on the terminal!
 
-With this CLI written in Rust you can get timetables faster, no need to open an app nor a browser anymore.
+`rodalies-cli` is written in [Rust](https://www.rust-lang.org/) and published to [crates.io](https://crates.io/crates/rodalies-cli), with it you can get timetables faster, no need to open an app nor a browser anymore.
 
 ## Installation
 
@@ -101,7 +101,7 @@ $ rodalies-cli -s si
 2. Search for today's timetable:
 
 ```bash
-$ rodalies-cli -f 79300 -t 79202
+$ rodalies-cli -f 79300 -t 71701
 🚂 Rodalies CLI configuration: Args { search: "", from: "79300", to: "79202", day: 7, month: 5, year: 2022 }
 📅 Today's date is 07/05/2022
 📆 Searching timetable for date 07/05/2022
@@ -127,6 +127,45 @@ $ rodalies-cli -f 79300 -t 79202
 |  00:19   |  R11  | Girona  | 20:49 | 21:08 |  Sils   |
 |  00:18   |  R11  | Girona  | 21:23 | 21:41 |  Sils   |
 +----------+-------+---------+-------+-------+---------+
+```
+
+2. If the timetable requires a transfer you will also see it, for another day's timetable:
+
+```bash
+$ rodalies-cli -f 79300 -t 72400 -d 20
+🚂 Rodalies CLI configuration: Args { search: "", from: "79300", to: "72400", day: 20, month: 5, year: 2022 }
+📅 Today's date is 08/05/2022
+📆 Searching timetable for date 20/05/2022
+📖 Timetable with 1 transfers found:
++----------+-------+---------+-------+-------+-----------------+--------+-------+-------+-------+----------+
+| Duration | Train | Station | Start | Stop  | Transfer        | Wait   | Train | Start | End   | Station  |
++----------+-------+---------+-------+-------+-----------------+--------+-------+-------+-------+----------+
+|  02:07   |  R11  | Girona  | 06:19 | 07:55 | Barcelona-Sants | 14 min |  R2   | 08:09 | 08:26 | Aeroport |
+|  02:17   |  R11  | Girona  | 07:09 | 08:40 | Barcelona-Sants | 29 min |  R2   | 09:09 | 09:26 | Aeroport |
+|  02:12   |  R11  | Girona  | 07:44 | 09:10 | Barcelona-Sants | 29 min |  R2   | 09:39 | 09:56 | Aeroport |
+|  02:17   |  R11  | Girona  | 08:09 | 09:40 | Barcelona-Sants | 29 min |  R2   | 10:09 | 10:26 | Aeroport |
+|  02:07   |  R11  | Girona  | 08:49 | 10:10 | Barcelona-Sants | 29 min |  R2   | 10:39 | 10:56 | Aeroport |
+|  02:17   |  R11  | Girona  | 09:39 | 11:10 | Barcelona-Sants | 29 min |  R2   | 11:39 | 11:56 | Aeroport |
+|  02:07   |  R11  | Girona  | 10:19 | 11:40 | Barcelona-Sants | 29 min |  R2   | 12:09 | 12:26 | Aeroport |
+|  02:44   |  RG1  | Girona  | 10:42 | 12:48 | Barcelona-Sants | 21 min |  R2   | 13:09 | 13:26 | Aeroport |
+|  02:17   |  R11  | Girona  | 11:39 | 13:10 | Barcelona-Sants | 29 min |  R2   | 13:39 | 13:56 | Aeroport |
+|  02:07   |  R11  | Girona  | 12:19 | 13:40 | Barcelona-Sants | 29 min |  R2   | 14:09 | 14:26 | Aeroport |
+|  02:44   |  RG1  | Girona  | 12:42 | 14:48 | Barcelona-Sants | 21 min |  R2   | 15:09 | 15:26 | Aeroport |
+|  02:17   |  R11  | Girona  | 13:39 | 15:10 | Barcelona-Sants | 29 min |  R2   | 15:39 | 15:56 | Aeroport |
+|  02:07   |  R11  | Girona  | 14:19 | 15:40 | Barcelona-Sants | 29 min |  R2   | 16:09 | 16:26 | Aeroport |
+|  02:07   |  R11  | Girona  | 14:49 | 16:10 | Barcelona-Sants | 29 min |  R2   | 16:39 | 16:56 | Aeroport |
+|  02:17   |  R11  | Girona  | 15:39 | 17:10 | Barcelona-Sants | 29 min |  R2   | 17:39 | 17:56 | Aeroport |
+|  02:07   |  R11  | Girona  | 16:19 | 17:40 | Barcelona-Sants | 29 min |  R2   | 18:09 | 18:26 | Aeroport |
+|  02:07   |  R11  | Girona  | 16:49 | 18:10 | Barcelona-Sants | 29 min |  R2   | 18:39 | 18:56 | Aeroport |
+|  02:17   |  R11  | Girona  | 17:09 | 18:40 | Barcelona-Sants | 29 min |  R2   | 19:09 | 19:26 | Aeroport |
+|  02:07   |  R11  | Girona  | 17:49 | 19:10 | Barcelona-Sants | 29 min |  R2   | 19:39 | 19:56 | Aeroport |
+|  02:07   |  R11  | Girona  | 18:19 | 19:40 | Barcelona-Sants | 29 min |  R2   | 20:09 | 20:26 | Aeroport |
+|  02:17   |  R11  | Girona  | 18:39 | 20:10 | Barcelona-Sants | 29 min |  R2   | 20:39 | 20:56 | Aeroport |
+|  02:07   |  R11  | Girona  | 19:19 | 20:40 | Barcelona-Sants | 29 min |  R2   | 21:09 | 21:26 | Aeroport |
+|  02:17   |  R11  | Girona  | 20:09 | 21:40 | Barcelona-Sants | 29 min |  R2   | 22:09 | 22:26 | Aeroport |
+|  01:58   |  R11  | Girona  | 20:59 | 22:20 | Barcelona-Sants | 19 min |  R2   | 22:39 | 22:57 | Aeroport |
+|  02:12   |  R11  | Girona  | 21:19 | 22:40 | Barcelona-Sants | 33 min |  R2   | 23:13 | 23:31 | Aeroport |
++----------+-------+---------+-------+-------+-----------------+--------+-------+-------+-------+----------+
 ```
 
 ## Issues

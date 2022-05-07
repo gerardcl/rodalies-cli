@@ -330,7 +330,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 transfer_station: s.6.to_string(),
                 transfer_train_type: s.7.to_string(),
                 transfer_time: s.8.to_string(),
-                transfer_start: s.9.to_string(),
+                transfer_start: s.9.to_string().replace("\n", "").replace("\t", ""),
                 transfer_end: s.10.to_string(),
             })
             .collect();
