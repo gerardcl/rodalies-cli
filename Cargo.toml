@@ -2,8 +2,14 @@
 name = "rodalies-cli"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Gerard C.L. <gerardcl@gmail.com>"]
+license = "BSD-3-Clause"
+description = "CLI for searching train timetables of the trains of Rodalies de la Generalitat de Catalunya"
+readme = "README.md"
+homepage = "https://github.com/gerardcl/rodalies-cli"
+repository = "https://github.com/gerardcl/rodalies-cli"
+keywords = ["cli", "timetables", "trains", "rodalies", "catalunya"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 clap = { version = "3.1", features = ["derive", "unicode"] }
