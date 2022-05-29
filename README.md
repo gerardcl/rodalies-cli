@@ -6,7 +6,42 @@ Timetables of the trains of Rodalies de la Generalitat de Catalunya on the termi
 
 ## Installation
 
-There will be more installation methods in the future, but for now you can:
+### Release binaries download
+
+After a release a github action updates it with x86_64 built binaries for:
+
+* Linux
+
+Run the following command to get the binary into your bin folder or tune it as you like:
+
+```bash
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/0.1.2/rodalies-cli-linux-amd64" && \
+chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/rodalies-cli
+```
+
+**NOTE** you will need libssl or openssl development packages installed.
+
+* MacOS
+
+Run the following command to get the binary into your bin folder or tune it as you like:
+
+```bash
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/0.1.2/rodalies-cli-darwin-amd64" && \
+chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bin/rodalies-cli
+```
+
+**NOTE** there is yet no M1 OS for github action supported, hence for M1 please do install via cargo (see next installation options).
+
+* Windows
+
+Run the following command to get the binary into your bin folder or tune it as you like:
+
+```bash
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/0.1.2/rodalies-cli-windows-amd64.exe" && \
+chmod +x rodalies-cli-windows-amd64.exe && mv rodalies-cli-windows-amd64.exe /mingw64/bin/rodalies-cli.exe
+```
+
+**NOTE** this is expected to run well on Git Bash for Windows, but you can also get it running on your CMD or PowerShell. If using WSL then refer to the linux installation.
 
 ### Cargo install
 
@@ -15,7 +50,7 @@ There will be more installation methods in the future, but for now you can:
 2. Now use cargo to install it on your rust bin folder
 
 ```bash
-$ cargo install rodalies-cli
+cargo install rodalies-cli
 ```
 
 ### Manual build
@@ -25,7 +60,7 @@ $ cargo install rodalies-cli
 2. Clone this repository
 
 ```bash
-$ git clone https://github.com/gerardcl/rodalies-cli.git
+git clone https://github.com/gerardcl/rodalies-cli.git
 ```
 
 3. Enter to the new cloned repo's folder and:
@@ -33,14 +68,14 @@ $ git clone https://github.com/gerardcl/rodalies-cli.git
    * Use cargo to run it:
 
    ```bash
-   $ cargo run -- --help
+   cargo run -- --help
    ```
 
    * Or build it and move the binary to your bin's folder:
 
    ```bash
-   $ cargo build --release
-   $ cp target/release/rodalies-cli <to your preferred bin folder loctation>
+   cargo build --release
+   cp target/release/rodalies-cli <to your preferred bin folder loctation>
    ```
 
 ## Usage
@@ -49,7 +84,7 @@ Once you have `rodalies-cli` installed just run the help command to understand w
 
 ```bash
 $ rodalies-cli --help
-rodalies-cli 0.1.0
+rodalies-cli 0.1.2
 Gerard C.L. <gerardcl@gmail.com>
 CLI for searching train timetables of the trains of Rodalies de la Generalitat de Catalunya
 
@@ -75,7 +110,7 @@ Long story short: you will need to use the stations' IDs to define your origins 
 1. First search the IDs of your origin and destination stations:
 
 ```bash
-$ rodalies-cli --s gir
+$ rodalies-cli -s gir
 🚂 Rodalies CLI 📅 Today's date is 09/05/2022
 🔍 Listing the stations' IDs of the stations' names containing: 'gir'
 +--------------+------------+
