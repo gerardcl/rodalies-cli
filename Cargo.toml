@@ -1,6 +1,6 @@
 [package]
 name = "rodalies-cli"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 authors = ["Gerard C.L. <gerardcl@gmail.com>"]
 license = "BSD-3-Clause"
@@ -12,9 +12,9 @@ keywords = ["cli", "timetables", "trains", "rodalies", "catalunya"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-clap = { version = "3.1", features = ["derive", "unicode"] }
+clap = { version = "3.2", features = ["derive", "unicode"] }
 surf = { version = "2.3", features = ["h1-client"] }
-tokio = { version = "1.18", features = ["full"] }
+tokio = { version = "1.19", features = ["full"] }
 scraper = "0.13"
-chrono = "0.4"
+chrono = { version = "0.4", features = []}
 prettytable-rs = "0.8"
