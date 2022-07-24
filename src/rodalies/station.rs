@@ -1,40 +1,21 @@
+use clap::ArgMatches;
 use prettytable::{Cell, Row};
-use scraper::{Html, Selector};
+use scraper::Selector;
 use std::error::Error;
-use surf::{Client, StatusCode};
+use surf::Client;
 
-use crate::config::cli::{init_results_table, Args};
+use crate::{config::cli::init_results_table, rodalies::client::get_search_page};
 
 struct Station {
     id: String,
     name: String,
 }
 
-pub async fn search_station(client: Client, args: Args) -> Result<(), Box<dyn Error>> {
+pub async fn search_station(client: Client, args: ArgMatches) -> Result<(), Box<dyn Error>> {
+    let search = args.get_one::<String>("search").unwrap();
     let mut results_table = init_results_table();
 
-    let mut response = client.get("/en/horaris").await?;
-
-    let error = match response.status() {
-        StatusCode::Ok => false,
-        _ => {
-            println!(
-                "⛔ Rodalies server failed with HTTP Status: {}",
-                response.status()
-            );
-            true
-        }
-    };
-
-    if error {
-        return Err(
-            ("🚨 Please, try again later or open an issue if the error persists...").into(),
-        );
-    }
-
-    let body_response = &response.body_string().await?;
-
-    let parsed_html = Html::parse_document(body_response);
+    let parsed_html = get_search_page(client).await?;
 
     let selector = &Selector::parse(r#"#origen > option"#).unwrap();
 
@@ -61,7 +42,7 @@ pub async fn search_station(client: Client, args: Args) -> Result<(), Box<dyn Er
     // search IDs
     println!(
         "🔍 Listing the stations' IDs of the stations' names containing: '{}'",
-        args.search
+        search
     );
     results_table.set_titles(Row::new(vec![
         Cell::new("Station name"),
@@ -69,11 +50,7 @@ pub async fn search_station(client: Client, args: Args) -> Result<(), Box<dyn Er
     ]));
 
     for station in stations_list.iter() {
-        if station
-            .name
-            .to_lowercase()
-            .contains(&args.search.to_lowercase())
-        {
+        if station.name.to_lowercase().contains(&search.to_lowercase()) {
             results_table.add_row(Row::new(vec![
                 Cell::new(&station.name),
                 Cell::new(&station.id).style_spec("c"),
@@ -84,6 +61,6 @@ pub async fn search_station(client: Client, args: Args) -> Result<(), Box<dyn Er
         results_table.printstd();
         Ok(())
     } else {
-        return Err(format!("🚨 No stations found with '{}' in it, please try searching something else and if problem persists open an issue...", args.search).into());
+        return Err(format!("🚨 No stations found with '{}' in it, please try searching something else and if problem persists open an issue...", search).into());
     }
 }
