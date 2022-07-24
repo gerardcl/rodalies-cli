@@ -1,9 +1,13 @@
+use clap::ArgMatches;
 use prettytable::{Cell, Row};
-use scraper::{Html, Selector};
+use scraper::Selector;
 use std::error::Error;
-use surf::{Client, StatusCode};
+use surf::Client;
 
-use crate::config::cli::{init_results_table, Args};
+use crate::{
+    config::cli::{init_results_table, parse_date, parse_trip},
+    rodalies::client::get_timetable_page,
+};
 
 struct TimetableData {
     departures_train_type: Vec<String>,
@@ -15,51 +19,12 @@ struct TimetableData {
     arrivals_station: Vec<String>,
 }
 
-pub async fn search_timetable(client: Client, args: Args) -> Result<(), Box<dyn Error>> {
+pub async fn search_timetable(client: Client, args: ArgMatches) -> Result<(), Box<dyn Error>> {
+    let (from, to) = parse_trip(&args)?;
+    let date = parse_date(&args)?;
     let mut results_table = init_results_table();
 
-    if args.from.is_empty() || args.to.is_empty() {
-        return Err(format!(
-            "🚨 Please, specify origin and destination station IDs (type '{} --help' for more)",
-            std::env::args().next().unwrap()
-        )
-        .into());
-    }
-    println!(
-        "📆 Searching timetable for date {:02}/{:02}/{}",
-        args.day, args.month, args.year
-    );
-
-    let date = format!("{:02}/{:02}/{}", args.day, args.month, args.year);
-    let mut response = client
-        .post("/en/horaris")
-        .content_type("application/x-www-form-urlencoded")
-        .body_string(format!(
-            "origen={}&desti={}&dataViatge={}&horaIni=00&lang=en&cercaRodalies=true&tornada=false",
-            args.from, args.to, date
-        ))
-        .await?;
-
-    let error = match response.status() {
-        StatusCode::Ok => false,
-        _ => {
-            println!(
-                "⛔ Rodalies server failed with HTTP Status: {}",
-                response.status()
-            );
-            true
-        }
-    };
-
-    if error {
-        return Err(
-            ("🚨 Please, try again later or open an issue if the error persists...").into(),
-        );
-    }
-
-    let body_response = &response.body_string().await?;
-
-    let parsed_html = Html::parse_document(body_response);
+    let parsed_html = get_timetable_page(client, from, to, date).await?;
 
     // check, show and fail if displayed errors
     let selector_errors = &Selector::parse(r#".error_contingut > p"#).unwrap();
@@ -72,11 +37,7 @@ pub async fn search_timetable(client: Client, args: Args) -> Result<(), Box<dyn 
         for (pos, e) in errors.iter().enumerate() {
             println!("💩 {}: {:?}", pos + 1, e);
         }
-        return Err(format!(
-            "🚨 Please, make sure you provided right flags and values (type '{} --help' for more)",
-            std::env::args().next().unwrap()
-        )
-        .into());
+        return Err("🚨 Please, make sure you provided right flags and values".into());
     }
 
     // check how much station transfer
@@ -90,7 +51,7 @@ pub async fn search_timetable(client: Client, args: Args) -> Result<(), Box<dyn 
     };
 
     println!(
-        "🔍 Listing timetable with {} transfers",
+        "📆 Listing timetable with {} transfers",
         total_transfers_count
     );
 
