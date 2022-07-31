@@ -5,6 +5,7 @@ use clap::{
 use prettytable::{format, Table};
 use std::error::Error;
 
+/// Configures the CLI behaviour, reads the arguments and returns and returns a container of matches.
 pub fn init_cli() -> ArgMatches {
     let dt = Local::today();
     println!(
@@ -72,12 +73,21 @@ pub fn init_cli() -> ArgMatches {
     cli.get_matches()
 }
 
+/// Configures and returns the Table to print results from.
 pub fn init_results_table() -> Table {
     let mut results_table = Table::new();
     results_table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
     results_table
 }
 
+/// Given a container of CLI args, it processes the `search` argument.
+pub fn parse_search(args: &ArgMatches) -> Result<String, Box<dyn Error>> {
+    let search = args.get_one::<String>("search").unwrap();
+    println!("🔍 Searching stations that contain the text: '{}'", search);
+    Ok(search.to_string())
+}
+
+/// Given a container of CLI args, it processes the `from` and `to` arguments.
 pub fn parse_trip(args: &ArgMatches) -> Result<(String, String), Box<dyn Error>> {
     let from = args.get_one::<String>("from");
     let to = args.get_one::<String>("to");
@@ -89,6 +99,7 @@ pub fn parse_trip(args: &ArgMatches) -> Result<(String, String), Box<dyn Error>>
     Ok((from.unwrap().to_string(), to.unwrap().to_string()))
 }
 
+/// Given a container of CLI args, it processes the `day`, `month` and `year` arguments.
 pub fn parse_date(args: &ArgMatches) -> Result<String, Box<dyn Error>> {
     let dt = Local::today();
     let day = match args.get_one::<String>("day") {
