@@ -9,16 +9,25 @@ use crate::{
     rodalies::client::get_timetable_page,
 };
 
+/// The Timetable data collected information struct
 struct TimetableData {
+    /// A list of the train types (also transfer departures, if any) of each trip
     departures_train_type: Vec<String>,
+    /// A list of the station name of the departures (also transfer departures, if any) of each trip
     departures_station: Vec<String>,
+    /// A list of the start time of the departures (also transfer departures, if any) of each trip
     departures_time: Vec<String>,
+    /// A list of the stop time (also the start time of a transfer) of each trip (if any)
     transfers_time: Vec<String>,
+    /// A list of the transfer duration time of each trip (if any)
     transfers_duration: Vec<String>,
+    /// A list of the arrival time of each trip
     arrivals_time: Vec<String>,
+    /// A list of the arrival station of each trip
     arrivals_station: Vec<String>,
 }
 
+/// Displays a table with the found train timetable.
 pub async fn search_timetable(client: Client, args: ArgMatches) -> Result<(), Box<dyn Error>> {
     let (from, to) = parse_trip(&args)?;
     let date = parse_date(&args)?;

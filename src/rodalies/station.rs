@@ -4,17 +4,21 @@ use scraper::Selector;
 use std::error::Error;
 use surf::Client;
 
-use crate::{config::cli::init_results_table, rodalies::client::get_search_page};
+use crate::{
+    config::cli::{init_results_table, parse_search},
+    rodalies::client::get_search_page,
+};
 
+/// The Station information struct
 struct Station {
+    /// The internal ID of the station name, that is provided by the rodalies site. It is the value used when submitting a search.
     id: String,
+    /// The rodalies station name. It is the display name provided by the rodalies site.
     name: String,
 }
 
-pub async fn search_station(client: Client, args: ArgMatches) -> Result<(), Box<dyn Error>> {
-    let search = args.get_one::<String>("search").unwrap();
-    let mut results_table = init_results_table();
-
+/// It parses the main search page and returns a list with all the existing Stations.
+async fn get_stations_list(client: Client) -> Result<Vec<Station>, Box<dyn Error>> {
     let parsed_html = get_search_page(client).await?;
 
     let selector = &Selector::parse(r#"#origen > option"#).unwrap();
@@ -39,11 +43,16 @@ pub async fn search_station(client: Client, args: ArgMatches) -> Result<(), Box<
         .filter(|s| !s.id.is_empty())
         .collect();
 
+    Ok(stations_list)
+}
+
+/// Displays a table with station IDs and station names, from the station names that contain the `search` text.
+pub async fn search_station(client: Client, args: ArgMatches) -> Result<(), Box<dyn Error>> {
+    let search = parse_search(&args)?;
+    let mut results_table = init_results_table();
+    let stations_list = get_stations_list(client).await?;
+
     // search IDs
-    println!(
-        "🔍 Listing the stations' IDs of the stations' names containing: '{}'",
-        search
-    );
     results_table.set_titles(Row::new(vec![
         Cell::new("Station name"),
         Cell::new("Station ID"),
@@ -61,6 +70,6 @@ pub async fn search_station(client: Client, args: ArgMatches) -> Result<(), Box<
         results_table.printstd();
         Ok(())
     } else {
-        return Err(format!("🚨 No stations found with '{}' in it, please try searching something else and if problem persists open an issue...", search).into());
+        return Err(format!("🚨 No stations found with text '{}' in it, please try searching something else, and if the problem persists open an issue...", search).into());
     }
 }
