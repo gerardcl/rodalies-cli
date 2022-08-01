@@ -8,3 +8,6 @@ pub mod client;
 pub mod station;
 /// `timetable` is the module responsible to handle the processing, filtering and display of the desired trains' timetable.
 pub mod timetable;
+
+/// `interactive` is the module responsible to handle the whole timetable search interactively.
+pub mod interactive;

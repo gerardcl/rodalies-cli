@@ -14,7 +14,7 @@ pub fn init_client() -> Client {
 }
 
 /// Returns the HTML body parsed of the main search page.
-pub async fn get_search_page(client: Client) -> Result<Html, Box<dyn Error>> {
+pub async fn get_search_page(client: &Client) -> Result<Html, Box<dyn Error>> {
     let mut response = client.get("/en/horaris").await?;
 
     let body_response = get_page_body(&mut response).await?;
@@ -24,7 +24,7 @@ pub async fn get_search_page(client: Client) -> Result<Html, Box<dyn Error>> {
 
 /// Returns the HTML body parsed of the timetable searched result page.
 pub async fn get_timetable_page(
-    client: Client,
+    client: &Client,
     from: String,
     to: String,
     date: String,
