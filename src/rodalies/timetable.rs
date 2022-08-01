@@ -28,9 +28,18 @@ struct TimetableData {
 }
 
 /// Displays a table with the found train timetable.
-pub async fn search_timetable(client: Client, args: ArgMatches) -> Result<(), Box<dyn Error>> {
-    let (from, to) = parse_trip(&args)?;
-    let date = parse_date(&args)?;
+pub async fn search_timetable(client: &Client, args: &ArgMatches) -> Result<(), Box<dyn Error>> {
+    let (from, to) = parse_trip(args)?;
+    let date = parse_date(args)?;
+    search_timetable_input(client, from, to, date).await
+}
+
+pub async fn search_timetable_input(
+    client: &Client,
+    from: String,
+    to: String,
+    date: String,
+) -> Result<(), Box<dyn Error>> {
     let mut results_table = init_results_table();
 
     let parsed_html = get_timetable_page(client, from, to, date).await?;

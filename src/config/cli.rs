@@ -1,6 +1,7 @@
 use chrono::{Datelike, Local};
 use clap::{
-    crate_authors, crate_description, crate_name, crate_version, App, Arg, ArgAction, ArgMatches,
+    crate_authors, crate_description, crate_name, crate_version, value_parser, App, Arg, ArgAction,
+    ArgMatches,
 };
 use prettytable::{format, Table};
 use std::error::Error;
@@ -18,6 +19,16 @@ pub fn init_cli() -> ArgMatches {
         .about(crate_description!())
         .version(crate_version!())
         .author(crate_authors!())
+        .arg(
+            Arg::new("interactive")
+                .required(false)
+                .short('i')
+                .long("interactive")
+                .takes_value(false)
+                .value_parser(value_parser!(bool))
+                .default_missing_value("true")
+                .help("Enable interactive train timetable search. If no value then it defaults to 'true'.")
+        )
         .arg(
             Arg::new("search")
                 .required(false)
@@ -78,6 +89,18 @@ pub fn init_results_table() -> Table {
     let mut results_table = Table::new();
     results_table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
     results_table
+}
+
+/// Given a container of CLI args, it processes the `interactive`, `from`, `to` and `search` arguments.
+pub fn interactive_mode(args: &ArgMatches) -> Result<bool, Box<dyn Error>> {
+    let interactive = args.get_one::<bool>("interactive").unwrap_or(&true);
+    let from = args.is_present("from");
+    let to = args.is_present("to");
+    let search = args.is_present("search");
+
+    let is_interactive = *interactive && !from && !to && !search;
+    println!("✨ Interactive mode enabled: '{}'", is_interactive);
+    Ok(is_interactive)
 }
 
 /// Given a container of CLI args, it processes the `search` argument.
