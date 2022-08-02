@@ -4,6 +4,8 @@ Timetables of the trains of Rodalies de la Generalitat de Catalunya on the termi
 
 `rodalies-cli` is written in [Rust](https://www.rust-lang.org/) and published to [crates.io](https://crates.io/crates/rodalies-cli), with it you can get timetables faster, no need to open an app nor a browser anymore.
 
+From release `1.0.0` one can search interactively the desired timetable. And, it has been refactored in a way that it is provided as a library too.
+
 ## Installation
 
 ### Release binaries download
@@ -15,7 +17,7 @@ After a release a github action updates it with x86_64 built binaries for:
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/0.1.4/rodalies-cli-linux-amd64" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.0/rodalies-cli-linux-amd64" && \
 chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/rodalies-cli
 ```
 
@@ -26,7 +28,7 @@ chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/0.1.4/rodalies-cli-darwin-amd64" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.0/rodalies-cli-darwin-amd64" && \
 chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bin/rodalies-cli
 ```
 
@@ -37,7 +39,7 @@ chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bi
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/0.1.4/rodalies-cli-windows-amd64.exe" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.0/rodalies-cli-windows-amd64.exe" && \
 chmod +x rodalies-cli-windows-amd64.exe && mv rodalies-cli-windows-amd64.exe /mingw64/bin/rodalies-cli.exe
 ```
 
@@ -84,7 +86,7 @@ Once you have `rodalies-cli` installed just run the help command to understand w
 
 ```bash
 $ rodalies-cli --help
-rodalies-cli 0.1.4
+rodalies-cli 1.0.0
 Gerard C.L. <gerardcl@gmail.com>
 CLI for searching train timetables of the trains of Rodalies de la Generalitat de Catalunya
 
@@ -92,18 +94,38 @@ USAGE:
     rodalies-cli [OPTIONS]
 
 OPTIONS:
-    -d, --day <DAY>          The day value of the date to search for [default: 7]
-    -f, --from <FROM>        The origin's station ID [default: ]
-    -h, --help               Print help information
-    -m, --month <MONTH>      The month value of the date to search for [default: 5]
-    -s, --search <SEARCH>    Search the ID of a given station's name pattern, to later use it on
-                             your origin or destination [default: ]
-    -t, --to <TO>            The destinations's station ID [default: ]
-    -V, --version            Print version information
-    -y, --year <YEAR>        The year value of the date to search for [default: 2022]
+    -d, --day <day>                    The day value of the date to search for (default = today's day).
+    -f, --from <from>                  The origin's station ID. [env: RODALIES_CLI_FROM=]
+    -h, --help                         Print help information
+    -i, --interactive <interactive>    Enable interactive train timetable search. If no value then it defaults to 'true'. [possible values: true, false]
+    -m, --month <month>                The month value of the date to search for (default = today's month).
+    -s, --search <search>              Search the ID of a given station's name pattern, to later use it on your origin or destination. [env: RODALIES_CLI_SEARCH=]
+    -t, --to <to>                      The destinations's station ID. [env: RODALIES_CLI_TO=]
+    -V, --version                      Print version information
+    -y, --year <year>                  The year value of the date to search for (default = today's year).
 ```
 
-Long story short: you will need to use the stations' IDs to define your origins and destinations. And, to know such IDs you just need to search for them by searching text patterns.
+**Long story short**: one can just run the naked command to start interactive mode. If not, then you will need to use the stations' IDs to define your origins and destinations manually. And, to know such IDs, you need to search for them by searching text patterns.
+
+### Interactive search
+
+Just type the naked command like:
+
+```bash
+$ rodalies-cli
+...
+```
+
+See it in action:
+
+[![Interactive searching in action](media/rodalies-cli-usage.gif)](media/rodalies-cli-usage.gif)
+
+**NOTE**: One can specify another date with the right flags, like:
+
+```bash
+$ rodalies-cli -d 9 -m 9
+...
+```
 
 ### Searching stations' IDs and timetables
 
@@ -111,8 +133,9 @@ Long story short: you will need to use the stations' IDs to define your origins 
 
 ```bash
 $ rodalies-cli -s gir
-🚂 Rodalies CLI 📅 Today's date is 09/05/2022
-🔍 Listing the stations' IDs of the stations' names containing: 'gir'
+🚂 Rodalies CLI 📅 Today's date is 02/08/2022
+✨ Interactive mode enabled: 'false'
+🔍 Searching stations that contain the text: 'gir'
 +--------------+------------+
 | Station name | Station ID |
 +--------------+------------+
@@ -120,8 +143,9 @@ $ rodalies-cli -s gir
 +--------------+------------+
 
 $ rodalies-cli -s si
-🚂 Rodalies CLI 📅 Today's date is 09/05/2022
-🔍 Listing the stations' IDs of the stations' names containing: 'si'
+🚂 Rodalies CLI 📅 Today's date is 02/08/2022
+✨ Interactive mode enabled: 'false'
+🔍 Searching stations that contain the text: 'si'
 +------------------------+------------+
 | Station name           | Station ID |
 +------------------------+------------+
@@ -135,9 +159,10 @@ $ rodalies-cli -s si
 
 ```bash
 $ rodalies-cli -f 79300 -t 79202
-🚂 Rodalies CLI 📅 Today's date is 09/05/2022
-📆 Searching timetable for date 09/05/2022
-🔍 Listing timetable with 0 transfers
+🚂 Rodalies CLI 📅 Today's date is 02/08/2022
+✨ Interactive mode enabled: 'false'
+🔍 Searching timetable for date 02/08/2022
+📆 Listing timetable with 0 transfers
 +----------+-------+---------+-------+-------+---------+
 | Duration | Train | Station | Start | End   | Station |
 +----------+-------+---------+-------+-------+---------+
@@ -181,9 +206,10 @@ If the timetable requires a transfer you will also see it:
 
 ```bash
 $ rodalies-cli -f 79300 -t 71701
-🚂 Rodalies CLI 📅 Today's date is 09/05/2022
-📆 Searching timetable for date 09/05/2022
-🔍 Listing timetable with 1 transfers
+🚂 Rodalies CLI 📅 Today's date is 02/08/2022
+✨ Interactive mode enabled: 'false'
+🔍 Searching timetable for date 02/08/2022
+📆 Listing timetable with 1 transfers
 +----------+-------+---------+-------+-------+-----------------+--------+-------+-------+-------+---------+
 | Duration | Train | Station | Start | Stop  | Transfer        | Wait   | Train | Start | End   | Station |
 +----------+-------+---------+-------+-------+-----------------+--------+-------+-------+-------+---------+
@@ -215,13 +241,14 @@ $ rodalies-cli -f 79300 -t 71701
 +----------+-------+---------+-------+-------+-----------------+--------+-------+-------+-------+---------+
 ```
 
-**NOTE**: The table will increase its width as per transfers the timetable has.
+**NOTE**: The table will increase its width as per many transfers the timetable has.
 
 ```bash
 $ rodalies-cli -f 79300 -t 72503
-🚂 Rodalies CLI 📅 Today's date is 09/05/2022
-📆 Searching timetable for date 09/05/2022
-🔍 Listing timetable with 2 transfers
+🚂 Rodalies CLI 📅 Today's date is 02/08/2022
+✨ Interactive mode enabled: 'false'
+🔍 Searching timetable for date 02/08/2022
+📆 Listing timetable with 2 transfers
 +----------+-------+---------+-------+-------+-----------------+--------+-------+-------+-------+------------------------------+-------+-------+-------+-------+------------------------+
 | Duration | Train | Station | Start | Stop  | Transfer        | Wait   | Train | Start | Stop  | Transfer                     | Wait  | Train | Start | End   | Station                |
 +----------+-------+---------+-------+-------+-----------------+--------+-------+-------+-------+------------------------------+-------+-------+-------+-------+------------------------+

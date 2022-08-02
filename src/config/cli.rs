@@ -8,13 +8,6 @@ use std::error::Error;
 
 /// Configures the CLI behaviour, reads the arguments and returns and returns a container of matches.
 pub fn init_cli() -> ArgMatches {
-    let dt = Local::today();
-    println!(
-        "🚂 Rodalies CLI 📅 Today's date is {:02}/{:02}/{}",
-        dt.day(),
-        dt.month(),
-        dt.year()
-    );
     let cli = App::new(crate_name!())
         .about(crate_description!())
         .version(crate_version!())
