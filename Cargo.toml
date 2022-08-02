@@ -1,6 +1,6 @@
 [package]
 name = "rodalies-cli"
-version = "0.1.4"
+version = "1.0.0"
 edition = "2021"
 authors = ["Gerard C.L. <gerardcl@gmail.com>"]
 license = "BSD-3-Clause"
