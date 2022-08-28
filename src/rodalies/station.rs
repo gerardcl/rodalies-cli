@@ -71,7 +71,7 @@ pub async fn search_station(client: &Client, args: &ArgMatches) -> Result<(), Bo
         results_table.printstd();
         Ok(())
     } else {
-        return Err(format!("🚨 No stations found with text '{}' in it, please try searching something else, and if the problem persists open an issue...", search).into());
+        Err(format!("🚨 No stations found with text '{}' in it, please try searching something else, and if the problem persists open an issue...", search).into())
     }
 }
 
@@ -102,6 +102,6 @@ pub async fn search_station_input(
         results_table.printstd();
         Ok(found_station_list)
     } else {
-        return Err(format!("🚨 No stations found with text '{}' in it, please try searching something else, and if the problem persists open an issue...", search).into());
+        Err(format!("🚨 No stations found with text '{}' in it, please try searching something else, and if the problem persists open an issue...", search).into())
     }
 }

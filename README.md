@@ -4,7 +4,7 @@ Timetables of the trains of Rodalies de la Generalitat de Catalunya on the termi
 
 `rodalies-cli` is written in [Rust](https://www.rust-lang.org/) and published to [crates.io](https://crates.io/crates/rodalies-cli), with it you can get timetables faster, no need to open an app nor a browser anymore.
 
-From release `1.0.0` one can search interactively the desired timetable. And, it has been refactored in a way that it is provided as a library too.
+From release `1.0.0`, one can interactively search the desired timetable. And, it has been refactored in a way that it is provided as a library too.
 
 ## Installation
 
@@ -17,7 +17,7 @@ After a release a github action updates it with x86_64 built binaries for:
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.0/rodalies-cli-linux-amd64" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.1/rodalies-cli-linux-amd64" && \
 chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/rodalies-cli
 ```
 
@@ -28,7 +28,7 @@ chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.0/rodalies-cli-darwin-amd64" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.1/rodalies-cli-darwin-amd64" && \
 chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bin/rodalies-cli
 ```
 
@@ -39,7 +39,7 @@ chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bi
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.0/rodalies-cli-windows-amd64.exe" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.1/rodalies-cli-windows-amd64.exe" && \
 chmod +x rodalies-cli-windows-amd64.exe && mv rodalies-cli-windows-amd64.exe /mingw64/bin/rodalies-cli.exe
 ```
 
@@ -86,7 +86,7 @@ Once you have `rodalies-cli` installed just run the help command to understand w
 
 ```bash
 $ rodalies-cli --help
-rodalies-cli 1.0.0
+rodalies-cli 1.0.1
 Gerard C.L. <gerardcl@gmail.com>
 CLI for searching train timetables of the trains of Rodalies de la Generalitat de Catalunya
 
