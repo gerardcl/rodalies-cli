@@ -12,13 +12,13 @@ keywords = ["cli", "timetables", "trains", "rodalies", "catalunya"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-clap = { version = "3.2", features = ["unicode", "cargo", "color", "suggestions", "env", "wrap_help"] }
+clap = { version = "4.2", features = ["unicode", "cargo", "color", "suggestions", "env", "wrap_help"] }
 surf = { version = "2.3", features = ["h1-client"] }
-tokio = { version = "1.19", features = ["full"] }
-scraper = "0.13"
+tokio = { version = "1.28", features = ["full"] }
+scraper = "0.16"
 chrono = { version = "0.4", features = []}
-prettytable-rs = "0.8"
+prettytable-rs = "0.10"
 
 [dev-dependencies]
 assert_cmd = "2.0"
-predicates = "2.1"
+predicates = "3.0"

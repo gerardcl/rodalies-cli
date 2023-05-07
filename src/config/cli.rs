@@ -1,14 +1,14 @@
 use chrono::{Datelike, Local};
 use clap::{
-    crate_authors, crate_description, crate_name, crate_version, value_parser, App, Arg, ArgAction,
-    ArgMatches,
+    crate_authors, crate_description, crate_name, crate_version, value_parser, Arg, ArgAction,
+    ArgMatches, Command
 };
 use prettytable::{format, Table};
 use std::error::Error;
 
 /// Configures the CLI behaviour, reads the arguments and returns and returns a container of matches.
 pub fn init_cli() -> ArgMatches {
-    let cli = App::new(crate_name!())
+    let cli = Command::new(crate_name!())
         .about(crate_description!())
         .version(crate_version!())
         .author(crate_authors!())
@@ -17,7 +17,7 @@ pub fn init_cli() -> ArgMatches {
                 .required(false)
                 .short('i')
                 .long("interactive")
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .value_parser(value_parser!(bool))
                 .default_missing_value("true")
                 .help("Enable interactive train timetable search. If no value then it defaults to 'true'.")
@@ -87,9 +87,9 @@ pub fn init_results_table() -> Table {
 /// Given a container of CLI args, it processes the `interactive`, `from`, `to` and `search` arguments.
 pub fn interactive_mode(args: &ArgMatches) -> Result<bool, Box<dyn Error>> {
     let interactive = args.get_one::<bool>("interactive").unwrap_or(&true);
-    let from = args.is_present("from");
-    let to = args.is_present("to");
-    let search = args.is_present("search");
+    let from = args.contains_id("from");
+    let to = args.contains_id("to");
+    let search = args.contains_id("search");
 
     let is_interactive = *interactive && !from && !to && !search;
     println!("✨ Interactive mode enabled: '{}'", is_interactive);
@@ -117,7 +117,7 @@ pub fn parse_trip(args: &ArgMatches) -> Result<(String, String), Box<dyn Error>>
 
 /// Given a container of CLI args, it processes the `day`, `month` and `year` arguments.
 pub fn parse_date(args: &ArgMatches) -> Result<String, Box<dyn Error>> {
-    let dt = Local::today();
+    let dt = Local::now();
     let day = match args.get_one::<String>("day") {
         Some(day) => match day.parse::<u32>() {
             Ok(day) => day,
