@@ -17,7 +17,7 @@ After a release a github action updates it with x86_64 built binaries for:
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.1/rodalies-cli-linux-amd64" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.2/rodalies-cli-linux-amd64" && \
 chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/rodalies-cli
 ```
 
@@ -28,7 +28,7 @@ chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.1/rodalies-cli-darwin-amd64" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.2/rodalies-cli-darwin-amd64" && \
 chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bin/rodalies-cli
 ```
 
@@ -39,7 +39,7 @@ chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bi
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.1/rodalies-cli-windows-amd64.exe" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.2/rodalies-cli-windows-amd64.exe" && \
 chmod +x rodalies-cli-windows-amd64.exe && mv rodalies-cli-windows-amd64.exe /mingw64/bin/rodalies-cli.exe
 ```
 
@@ -86,23 +86,20 @@ Once you have `rodalies-cli` installed just run the help command to understand w
 
 ```bash
 $ rodalies-cli --help
-rodalies-cli 1.0.1
-Gerard C.L. <gerardcl@gmail.com>
 CLI for searching train timetables of the trains of Rodalies de la Generalitat de Catalunya
 
-USAGE:
-    rodalies-cli [OPTIONS]
+Usage: rodalies-cli [OPTIONS]
 
-OPTIONS:
-    -d, --day <day>                    The day value of the date to search for (default = today's day).
-    -f, --from <from>                  The origin's station ID. [env: RODALIES_CLI_FROM=]
-    -h, --help                         Print help information
-    -i, --interactive <interactive>    Enable interactive train timetable search. If no value then it defaults to 'true'. [possible values: true, false]
-    -m, --month <month>                The month value of the date to search for (default = today's month).
-    -s, --search <search>              Search the ID of a given station's name pattern, to later use it on your origin or destination. [env: RODALIES_CLI_SEARCH=]
-    -t, --to <to>                      The destinations's station ID. [env: RODALIES_CLI_TO=]
-    -V, --version                      Print version information
-    -y, --year <year>                  The year value of the date to search for (default = today's year).
+Options:
+  -i, --interactive      Enable interactive train timetable search. No value required.
+  -s, --search <search>  Search the ID of a given station's name pattern, to later use it on your origin or destination. [env: RODALIES_CLI_SEARCH=]
+  -f, --from <from>      The origin's station ID. [env: RODALIES_CLI_FROM=]
+  -t, --to <to>          The destinations's station ID. [env: RODALIES_CLI_TO=]
+  -d, --day <day>        The day value of the date to search for (default = today's day).
+  -m, --month <month>    The month value of the date to search for (default = today's month).
+  -y, --year <year>      The year value of the date to search for (default = today's year).
+  -h, --help             Print help
+  -V, --version          Print version
 ```
 
 **Long story short**: one can just run the naked command to start interactive mode. If not, then you will need to use the stations' IDs to define your origins and destinations manually. And, to know such IDs, you need to search for them by searching text patterns.

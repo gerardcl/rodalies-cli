@@ -1,7 +1,7 @@
 use chrono::{Datelike, Local};
 use clap::{
     crate_authors, crate_description, crate_name, crate_version, value_parser, Arg, ArgAction,
-    ArgMatches, Command
+    ArgMatches, Command,
 };
 use prettytable::{format, Table};
 use std::error::Error;
@@ -20,7 +20,7 @@ pub fn init_cli() -> ArgMatches {
                 .action(ArgAction::SetTrue)
                 .value_parser(value_parser!(bool))
                 .default_missing_value("true")
-                .help("Enable interactive train timetable search. If no value then it defaults to 'true'.")
+                .help("Enable interactive train timetable search. No value required.")
         )
         .arg(
             Arg::new("search")
