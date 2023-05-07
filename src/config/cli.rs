@@ -159,8 +159,8 @@ mod tests {
     }
 
     #[test]
-    fn test_init_cli_is_empty() {
+    fn test_init_cli_with_defaults() {
         let args = init_cli();
-        assert!(!args.args_present());
+        assert!(args.args_present());
     }
 }

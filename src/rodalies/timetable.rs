@@ -169,7 +169,7 @@ pub async fn search_timetable_input(
 
         let clean_arrivals_time: Vec<String> = arrivals_time
             .iter()
-            .map(|x| x.replace('\n', "").replace('\t', ""))
+            .map(|x| x.replace(['\n', '\t'], ""))
             .collect();
 
         if clean_arrivals_time.is_empty() {
@@ -191,31 +191,31 @@ pub async fn search_timetable_input(
     let timetable_data: TimetableData = TimetableData {
         departures_train_type: departures_train_type
             .iter()
-            .map(|x| x.replace('\n', "").replace('\t', ""))
+            .map(|x| x.replace(['\n', '\t'], ""))
             .collect(),
         departures_station: departures_station
             .iter()
-            .map(|x| x.replace('\n', "").replace('\t', ""))
+            .map(|x| x.replace(['\n', '\t'], ""))
             .collect(),
         departures_time: departures_time
             .iter()
-            .map(|x| x.replace('\n', "").replace('\t', ""))
+            .map(|x| x.replace(['\n', '\t'], ""))
             .collect(),
         transfers_time: transfers_time
             .iter()
-            .map(|x| x.replace('\n', "").replace('\t', ""))
+            .map(|x| x.replace(['\n', '\t'], ""))
             .collect(),
         transfers_duration: transfers_duration
             .iter()
-            .map(|x| x.replace('\n', "").replace('\t', ""))
+            .map(|x| x.replace(['\n', '\t'], ""))
             .collect(),
         arrivals_time: arrivals_time
             .iter()
-            .map(|x| x.replace('\n', "").replace('\t', ""))
+            .map(|x| x.replace(['\n', '\t'], ""))
             .collect(),
         arrivals_station: arrivals_station
             .iter()
-            .map(|x| x.replace('\n', "").replace('\t', ""))
+            .map(|x| x.replace(['\n', '\t'], ""))
             .collect(),
     };
 
