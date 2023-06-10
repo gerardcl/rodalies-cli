@@ -86,12 +86,11 @@ pub fn init_results_table() -> Table {
 
 /// Given a container of CLI args, it processes the `interactive`, `from`, `to` and `search` arguments.
 pub fn interactive_mode(args: &ArgMatches) -> Result<bool, Box<dyn Error>> {
-    let interactive = args.get_one::<bool>("interactive").unwrap_or(&true);
     let from = args.contains_id("from");
     let to = args.contains_id("to");
     let search = args.contains_id("search");
 
-    let is_interactive = *interactive && !from && !to && !search;
+    let is_interactive = !(from || to || search);
     println!("✨ Interactive mode enabled: '{}'", is_interactive);
     Ok(is_interactive)
 }
@@ -161,6 +160,10 @@ mod tests {
     #[test]
     fn test_init_cli_with_defaults() {
         let args = init_cli();
-        assert!(args.args_present());
+        assert_eq!(args.ids().len(), 1);
+        assert_eq!(
+            args.ids().map(|id| id.as_str()).collect::<Vec<_>>(),
+            ["interactive"]
+        );
     }
 }

@@ -17,7 +17,7 @@ After a release a github action updates it with x86_64 built binaries for:
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.2/rodalies-cli-linux-amd64" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.3/rodalies-cli-linux-amd64" && \
 chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/rodalies-cli
 ```
 
@@ -28,7 +28,7 @@ chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.2/rodalies-cli-darwin-amd64" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.3/rodalies-cli-darwin-amd64" && \
 chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bin/rodalies-cli
 ```
 
@@ -39,7 +39,7 @@ chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bi
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.2/rodalies-cli-windows-amd64.exe" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.0.3/rodalies-cli-windows-amd64.exe" && \
 chmod +x rodalies-cli-windows-amd64.exe && mv rodalies-cli-windows-amd64.exe /mingw64/bin/rodalies-cli.exe
 ```
 
