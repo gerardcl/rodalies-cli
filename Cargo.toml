@@ -1,6 +1,6 @@
 [package]
 name = "rodalies-cli"
-version = "1.0.3"
+version = "1.1.0"
 edition = "2021"
 authors = ["Gerard C.L. <gerardcl@gmail.com>"]
 license = "BSD-3-Clause"
@@ -18,7 +18,9 @@ tokio = { version = "1.28", features = ["full"] }
 scraper = "0.16"
 chrono = { version = "0.4", features = []}
 prettytable-rs = "0.10"
+serde_json = "1.0"
 
 [dev-dependencies]
 assert_cmd = "2.0"
 predicates = "3.0"
+tokio-test = "0.4"
