@@ -1,3 +1,4 @@
+use clap::crate_version;
 use scraper::Html;
 use std::{error::Error, time::Duration};
 use surf::{Client, Config, Response, StatusCode, Url};
@@ -15,7 +16,16 @@ pub fn init_client() -> Client {
 
 /// Returns the HTML body parsed of the main search page.
 pub async fn get_search_page(client: &Client) -> Result<Html, Box<dyn Error>> {
-    let mut response = client.get("/en/horaris").await?;
+    let mut response = client
+        .get("/en/horaris")
+        .header(
+            "User-Agent",
+            format!(
+                "rodalies-cli/{} (github.com/gerardcl/rodalies-cli)",
+                crate_version!()
+            ),
+        )
+        .await?;
 
     let body_response = get_page_body(&mut response).await?;
 
@@ -31,6 +41,13 @@ pub async fn get_timetable_page(
 ) -> Result<Html, Box<dyn Error>> {
     let mut response = client
         .post("/en/horaris")
+        .header(
+            "User-Agent",
+            format!(
+                "rodalies-cli/{} (github.com/gerardcl/rodalies-cli)",
+                crate_version!()
+            ),
+        )
         .content_type("application/x-www-form-urlencoded")
         .body_string(format!(
             "origen={}&desti={}&dataViatge={}&horaIni=00&lang=en&cercaRodalies=true&tornada=false",

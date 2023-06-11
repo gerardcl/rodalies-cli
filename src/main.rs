@@ -1,6 +1,7 @@
 use std::error::Error;
 
 use chrono::{Datelike, Local};
+use rodalies_cli::config::check::check_rodalies_version;
 use rodalies_cli::config::cli::{init_cli, interactive_mode};
 use rodalies_cli::rodalies::client::init_client;
 use rodalies_cli::rodalies::interactive::search_interactive;
@@ -18,6 +19,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         dt.month(),
         dt.year()
     );
+
+    check_rodalies_version().await;
 
     if !interactive_mode(&args).unwrap() {
         if args.contains_id("search") {
