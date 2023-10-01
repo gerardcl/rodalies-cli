@@ -1,6 +1,6 @@
 use clap::crate_version;
 use scraper::Html;
-use std::{error::Error, time::Duration};
+use std::{error::Error, fs, time::Duration};
 use surf::{Client, Config, Response, StatusCode, Url};
 
 /// Configures and returns the HTTP client that will interact with the `rodalies.gencat.cat` site.
@@ -80,6 +80,11 @@ async fn get_page_body(response: &mut Response) -> Result<String, Box<dyn Error>
     }
 
     Ok(response.body_string().await?)
+}
+
+pub fn get_html_from_file(file_path: &str) -> Result<Html, Box<dyn Error>> {
+    let html_file = fs::read_to_string(file_path).expect("Should have been able to read the file");
+    Ok(Html::parse_document(&html_file))
 }
 
 #[cfg(test)]
