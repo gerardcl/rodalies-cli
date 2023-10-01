@@ -1,7 +1,7 @@
 use clap::ArgMatches;
 use prettytable::{Cell, Row};
-use scraper::Selector;
-use std::{collections::VecDeque, error::Error};
+use scraper::{ElementRef, Html, Selector};
+use std::error::Error;
 use surf::Client;
 
 use crate::{
@@ -9,29 +9,57 @@ use crate::{
     rodalies::client::get_timetable_page,
 };
 
-/// The Timetable data collected information struct
-struct TimetableData {
-    /// A list of the train types (also transfer departures, if any) of each trip
-    departures_train_type: Vec<String>,
-    /// A list of the station name of the departures (also transfer departures, if any) of each trip
-    departures_station: Vec<String>,
-    /// A list of the start time of the departures (also transfer departures, if any) of each trip
-    departures_time: Vec<String>,
-    /// A list of the stop time (also the start time of a transfer) of each trip (if any)
-    transfers_time: Vec<String>,
-    /// A list of the transfer duration time of each trip (if any)
-    transfers_duration: Vec<String>,
-    /// A list of the arrival time of each trip
-    arrivals_time: Vec<String>,
-    /// A list of the arrival station of each trip
-    arrivals_station: Vec<String>,
-}
-
 /// Displays a table with the found train timetable.
 pub async fn search_timetable(client: &Client, args: &ArgMatches) -> Result<(), Box<dyn Error>> {
     let (from, to) = parse_trip(args)?;
     let date = parse_date(args)?;
     search_timetable_input(client, from, to, date).await
+}
+
+// Convenience function to avoid unwrap()ing all the time
+fn make_selector(selector: &str) -> Selector {
+    Selector::parse(selector).unwrap()
+}
+
+trait VecParser {
+    fn texts_parser(&self, selector: Selector) -> Vec<String>;
+    fn alts_parser(&self, selector: Selector) -> Vec<String>;
+}
+impl VecParser for Html {
+    fn texts_parser(&self, selector: Selector) -> Vec<String> {
+        self.select(&selector)
+            .flat_map(|el| el.text())
+            .map(|t| t.to_string())
+            .map(|x| x.trim().to_string())
+            .filter(|x| !x.is_empty())
+            .collect()
+    }
+    fn alts_parser(&self, selector: Selector) -> Vec<String> {
+        self.select(&selector)
+            .flat_map(|el| el.value().attr("alt"))
+            .map(|t| t.to_string())
+            .map(|x| x.trim().to_string())
+            .filter(|x| !x.is_empty())
+            .collect()
+    }
+}
+impl VecParser for ElementRef<'_> {
+    fn texts_parser(&self, selector: Selector) -> Vec<String> {
+        self.select(&selector)
+            .flat_map(|el| el.text())
+            .map(|t| t.to_string())
+            .map(|x| x.trim().to_string())
+            .filter(|x| !x.is_empty())
+            .collect()
+    }
+    fn alts_parser(&self, selector: Selector) -> Vec<String> {
+        self.select(&selector)
+            .flat_map(|el| el.value().attr("alt"))
+            .map(|t| t.to_string())
+            .map(|x| x.trim().to_string())
+            .filter(|x| !x.is_empty())
+            .collect()
+    }
 }
 
 pub async fn search_timetable_input(
@@ -58,23 +86,18 @@ pub async fn search_timetable_input(
         return Err("🚨 Please, make sure you provided right flags and values".into());
     }
 
-    // check how much station transfer and if we need to skip transfers that are useless
-    let transfers = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap.connection"#).unwrap();
-    let totals = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap"#).unwrap();
-    let arrivals = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap > ul.timeline > li.arribada"#).unwrap();
-    let transfers_count = parsed_html.select(transfers).count();
-    let total_count = parsed_html.select(totals).count();
-    let arrivals_count = parsed_html.select(arrivals).count();
-    let total_transfers_count = match transfers_count {
-        count if count > 0 => transfers_count / (total_count - transfers_count),
-        _ => 0,
-    };
-    let skip_transfers = arrivals_count == transfers_count && total_transfers_count == 0;
-
-    println!(
-        "📆 Listing timetable with {} transfers",
-        total_transfers_count
+    let resum_selector = make_selector(r#"div.resum > div.col-sm-12 > div.taula.d60 > div.cel"#);
+    let total_stations = parsed_html.select(&resum_selector);
+    // println!("#estacions: {:?}", &total_stations.count());
+    let min_temp_selector = make_selector(
+        r#"div.resum > div.col-sm-12 > div.taula.d40 > div.cel > div.info > span.t-min"#,
     );
+    let min_temp = parsed_html.texts_parser(min_temp_selector);
+
+    let max_temp_selector = make_selector(
+        r#"div.resum > div.col-sm-12 > div.taula.d40 > div.cel > div.info > span.t-max"#,
+    );
+    let max_temp = parsed_html.texts_parser(max_temp_selector);
 
     // Create timetable's first row
     let mut title_cells: Vec<Cell> = vec![
@@ -83,7 +106,11 @@ pub async fn search_timetable_input(
         Cell::new("Station"),
         Cell::new("Start"),
     ];
-    for _ in 0..total_transfers_count {
+    let total = total_stations.count();
+
+    println!("📆 Listing timetable with {} transfers", total - 2);
+
+    for _ in 2..total {
         title_cells.push(Cell::new("Stop"));
         title_cells.push(Cell::new("Transfer"));
         title_cells.push(Cell::new("Wait"));
@@ -94,181 +121,69 @@ pub async fn search_timetable_input(
     title_cells.push(Cell::new("Station"));
     results_table.set_titles(Row::new(title_cells.clone()));
 
-    let selector_duration = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-heading > a > div.resultats-fila > div.durada"#).unwrap();
-    let durations: Vec<&str> = parsed_html
-        .select(selector_duration)
-        .flat_map(|el| el.text())
-        .collect();
+    let mut different_lengths = false;
 
-    // departures
-    let selector_departure_train_type = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap > ul.timeline > li.sortida > div.timeline-badge > img"#).unwrap();
-    let departures_train_type: Vec<&str> = parsed_html
-        .select(selector_departure_train_type)
-        .flat_map(|el| el.value().attr("alt"))
-        .collect();
-    let selector_departure_station = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap > ul.timeline > li.sortida > div.estacio > h3"#).unwrap();
-    let departures_station: Vec<&str> = parsed_html
-        .select(selector_departure_station)
-        .flat_map(|el| el.text())
-        .collect();
-    let selector_departure_time = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap > ul.timeline > li.sortida > div.horari > div.hora"#).unwrap();
-    let departures_time: Vec<&str> = parsed_html
-        .select(selector_departure_time)
-        .flat_map(|el| el.text())
-        .collect();
+    let rows_selector = make_selector(r#"#acordio_resultats > div.panel.panel-default"#);
+    let rows = parsed_html.select(&rows_selector);
+    for row in rows {
+        let durada_selector: Selector = make_selector(r#"div.resultats-fila > div.durada"#);
+        let durada = row.texts_parser(durada_selector);
 
-    if departures_time.is_empty()
-        || departures_station.is_empty()
-        || departures_train_type.is_empty()
-    {
-        return Err(format!("Something went wrong, try again. Please, if problem presists do report an issue with the following information: departures_time == {}, departures_station == {}, departures_train_type == {}", departures_time.len(),departures_station.len(),departures_train_type.len() ).into());
-    }
+        let hora_sortides_selector: Selector =
+            make_selector(r#"li.sortida > div.horari > div.hora"#);
+        let hora_sortides = row.texts_parser(hora_sortides_selector);
 
-    // transfers
-    let selector_transfer_time = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap > ul.timeline > li.transbord > div.horari > div.hora"#).unwrap();
-    let transfers_time: Vec<&str> = parsed_html
-        .select(selector_transfer_time)
-        .flat_map(|el| el.text())
-        .collect();
-    let selector_transfer_duration = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap > ul.timeline > li.transbord > div.horari > div.temps > span"#).unwrap();
-    let transfers_duration: Vec<&str> = parsed_html
-        .select(selector_transfer_duration)
-        .flat_map(|el| el.text())
-        .collect();
+        let hora_transbords_selector: Selector =
+            make_selector(r#"li.transbord > div.horari > div.hora"#);
+        let hora_transbords = row.texts_parser(hora_transbords_selector);
 
-    // arrivals
-    let selector_arrival_time = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap > ul.timeline > li.arribada > div.mask > div.horari > div.hora"#).unwrap();
-    let mut arrivals_time: VecDeque<&str> = parsed_html
-        .select(selector_arrival_time)
-        .flat_map(|el| el.text())
-        .collect();
-    let selector_arrival_station = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap > ul.timeline > li.arribada > div.mask > div.estacio > h3"#).unwrap();
-    let mut arrivals_station: VecDeque<&str> = parsed_html
-        .select(selector_arrival_station)
-        .flat_map(|el| el.text())
-        .collect();
+        let hora_arribades_selector: Selector =
+            make_selector(r#"li.arribada > div.mask > div.horari > div.hora"#);
+        let hora_arribades = row.texts_parser(hora_arribades_selector);
 
-    // when different number of transfers in a timetable:
-    // 1- expected arrival div is now called arrivals (the ones we want to keep)
-    // 2- arrival div is the arrivals of the different longer transfers
-    // 3- we need to collect both and inject an arrival in the arrivals list just after an arrival is equal to that arrivals value
-    // 4- in the iterator we would just skip the arrival that contains transfer when arrivals == arrivals+1
-    // we need to do all this complex handling because rodalies web decided that although you arrive at the same time you might want to catch a train earlier and wait for a transfer somewhere just to get the next train you would end up getting anyway...
-    if skip_transfers {
-        // arrivals diff (if different transfers then this is the ones we want to keep)
-        let selector_arrival_diff_time = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap > ul.timeline > li.arribadas > div.mask > div.horari > div.hora"#).unwrap();
-        let arrivals_diff_time: VecDeque<&str> = parsed_html
-            .select(selector_arrival_diff_time)
-            .flat_map(|el| el.text())
-            .collect();
-        let selector_arrival_diff_station = &Selector::parse(r#"#acordio_resultats > div.panel.panel-default > div.panel-collapse.collapse > div.intinerari > div.timeline-wrap > ul.timeline > li.arribadas > div.mask > div.estacio > h3"#).unwrap();
-        let arrivals_diff_station: VecDeque<&str> = parsed_html
-            .select(selector_arrival_diff_station)
-            .flat_map(|el| el.text())
-            .collect();
+        let durada_transbords_selector: Selector =
+            make_selector(r#"li.transbord > div.horari > div.temps > span"#);
+        let durada_transbords = row.texts_parser(durada_transbords_selector);
 
-        let clean_arrivals_time: Vec<String> = arrivals_time
-            .iter()
-            .map(|x| x.replace(['\n', '\t'], ""))
-            .collect();
+        let tren_sortides_selector: Selector = make_selector(r#"div.timeline-badge > img"#);
+        let tren_sortides = row.alts_parser(tren_sortides_selector);
 
-        if clean_arrivals_time.is_empty() {
-            return Err(format!("Something went wrong, try again. Please, if problem presists do report an issue with the following information: arrivals_diff_time == {}, clean_arrivals_time == {}", arrivals_diff_time.len(),clean_arrivals_time.len()).into());
+        let estacions_selector: Selector = make_selector(r#"div.estacio > h3.timeline-title"#);
+        let estacions = row.texts_parser(estacions_selector);
+
+        let mut row_cells: Vec<Cell> = vec![
+            Cell::new(durada[0].as_str()),
+            Cell::new(tren_sortides[0].as_str()),
+            Cell::new(estacions[0].as_str()),
+            Cell::new(hora_sortides[0].as_str()),
+        ];
+        for tx in 0..hora_transbords.len() {
+            row_cells.push(Cell::new(hora_transbords[tx].as_str()));
+            row_cells.push(Cell::new(estacions[tx + 1].as_str()));
+            row_cells.push(Cell::new(durada_transbords[tx].as_str()));
+            row_cells.push(Cell::new(tren_sortides[tx + 1].as_str()));
+            row_cells.push(Cell::new(hora_sortides[tx + 1].as_str()));
         }
-
-        arrivals_time = arrivals_diff_time.clone();
-        arrivals_station = arrivals_diff_station.clone();
-        let mut found = 0;
-        for (i, arrival) in arrivals_diff_time.iter().enumerate() {
-            if clean_arrivals_time.contains(&arrival.to_string()) {
-                arrivals_time.insert(i + found, arrival);
-                arrivals_station.insert(i + found, arrivals_diff_station[i]);
-                found += 1;
+        if hora_transbords.len() < total - 2 {
+            different_lengths = true;
+            for _ in 0..(total - 2 - hora_transbords.len()) {
+                row_cells.push(Cell::new(""));
+                row_cells.push(Cell::new(""));
+                row_cells.push(Cell::new(""));
+                row_cells.push(Cell::new(""));
+                row_cells.push(Cell::new(""));
             }
         }
-    }
-
-    let timetable_data: TimetableData = TimetableData {
-        departures_train_type: departures_train_type
-            .iter()
-            .map(|x| x.replace(['\n', '\t'], ""))
-            .collect(),
-        departures_station: departures_station
-            .iter()
-            .map(|x| x.replace(['\n', '\t'], ""))
-            .collect(),
-        departures_time: departures_time
-            .iter()
-            .map(|x| x.replace(['\n', '\t'], ""))
-            .collect(),
-        transfers_time: transfers_time
-            .iter()
-            .map(|x| x.replace(['\n', '\t'], ""))
-            .collect(),
-        transfers_duration: transfers_duration
-            .iter()
-            .map(|x| x.replace(['\n', '\t'], ""))
-            .collect(),
-        arrivals_time: arrivals_time
-            .iter()
-            .map(|x| x.replace(['\n', '\t'], ""))
-            .collect(),
-        arrivals_station: arrivals_station
-            .iter()
-            .map(|x| x.replace(['\n', '\t'], ""))
-            .collect(),
-    };
-
-    let mut skip = 0;
-    for (i, duration) in durations.iter().enumerate() {
-        if skip_transfers
-            && i < (durations.len() - 1)
-            && timetable_data.arrivals_time[i] == timetable_data.arrivals_time[i + 1]
-        {
-            skip += 1;
-            continue;
-        }
-        let mut row_cells: Vec<Cell> = vec![
-            Cell::new(duration),
-            Cell::new(
-                timetable_data.departures_train_type[(i + skip) * (total_transfers_count + 1)]
-                    .as_str(),
-            ),
-            Cell::new(
-                timetable_data.departures_station[(i + skip) * (total_transfers_count + 1)]
-                    .as_str(),
-            ),
-            Cell::new(
-                timetable_data.departures_time[(i + skip) * (total_transfers_count + 1)].as_str(),
-            ),
-        ];
-        for j in 0..total_transfers_count {
-            row_cells.push(Cell::new(
-                timetable_data.transfers_time[(i + skip) * total_transfers_count + j].as_str(),
-            ));
-            row_cells.push(Cell::new(
-                timetable_data.departures_station
-                    [((i + skip) * (total_transfers_count + 1)) + j + 1]
-                    .as_str(),
-            ));
-            row_cells.push(Cell::new(
-                timetable_data.transfers_duration[(i + skip) * total_transfers_count + j].as_str(),
-            ));
-            row_cells.push(Cell::new(
-                timetable_data.departures_train_type
-                    [((i + skip) * (total_transfers_count + 1)) + j + 1]
-                    .as_str(),
-            ));
-            row_cells.push(Cell::new(
-                timetable_data.departures_time[((i + skip) * (total_transfers_count + 1)) + j + 1]
-                    .as_str(),
-            ));
-        }
-        row_cells.push(Cell::new(timetable_data.arrivals_time[i].as_str()));
-        row_cells.push(Cell::new(timetable_data.arrivals_station[i].as_str()));
+        row_cells.push(Cell::new(hora_arribades[0].as_str()));
+        row_cells.push(Cell::new(estacions[estacions.len() - 1].as_str()));
         results_table.add_row(Row::new(row_cells.clone()));
     }
 
+    if different_lengths {
+        println!("📢 Some trips have extra transfers. You might consider getting shorter trips.");
+    }
+
+    println!("🌡 Expected temperatures between {} and {}", min_temp[0], max_temp[0]);
     results_table.printstd();
 
     Ok(())

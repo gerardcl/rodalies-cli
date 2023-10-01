@@ -20,7 +20,7 @@ mod tests {
     fn cli_fails_when_only_one_station_point_provided() -> Result<(), Box<dyn std::error::Error>> {
         let mut cmd = Command::cargo_bin("rodalies-cli").unwrap();
 
-        cmd.arg("-f 12")
+        cmd.args(["-f", "12"])
             .assert()
             .failure()
             .stderr(predicate::str::contains(
