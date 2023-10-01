@@ -183,7 +183,7 @@ pub async fn search_timetable_input(
         println!("📢 Some trips have extra transfers. You might consider getting shorter trips.");
     }
 
-    println!("🌡 Expected temperatures between {} and {}", min_temp[0], max_temp[0]);
+    println!("🌡 Expected temperatures at destination between {}C and {}C", min_temp[0], max_temp[0]);
     results_table.printstd();
 
     Ok(())
