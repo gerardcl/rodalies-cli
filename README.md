@@ -1,4 +1,4 @@
-[![CICD](https://github.com/gerardcl/rodalies-cli/actions/workflows/CICD.yml/badge.svg)](https://github.com/gerardcl/rodalies-cli/actions/workflows/CICD.yml)
+[![CICD](https://github.com/gerardcl/rodalies-cli/actions/workflows/CICD.yaml/badge.svg)](https://github.com/gerardcl/rodalies-cli/actions/workflows/CICD.yaml)
 
 # Rodalies Timetables CLI
 
