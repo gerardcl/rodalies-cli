@@ -1,6 +1,6 @@
 [package]
 name = "rodalies-cli"
-version = "1.2.0"
+version = "1.2.1"
 edition = "2021"
 authors = ["Gerard C.L. <gerardcl@gmail.com>"]
 license = "BSD-3-Clause"
@@ -14,8 +14,8 @@ categories = ["command-line-utilities"]
 [dependencies]
 clap = { version = "4.4", features = ["unicode", "cargo", "color", "suggestions", "env", "wrap_help"] }
 surf = { version = "2.3", features = ["h1-client"] }
-tokio = { version = "1.32", features = ["full"] }
-scraper = "0.17"
+tokio = { version = "1.34", features = ["full"] }
+scraper = "0.18"
 chrono = { version = "0.4", features = []}
 prettytable-rs = "0.10"
 serde_json = "1.0"

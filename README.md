@@ -1,3 +1,5 @@
+[![CICD](https://github.com/gerardcl/rodalies-cli/actions/workflows/CICD.yml/badge.svg)](https://github.com/gerardcl/rodalies-cli/actions/workflows/CICD.yml)
+
 # Rodalies Timetables CLI
 
 Timetables of the trains of Rodalies de la Generalitat de Catalunya on the terminal!
@@ -17,7 +19,7 @@ After a release a github action updates it with x86_64 built binaries for:
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.2.0/rodalies-cli-linux-amd64" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.2.1/rodalies-cli-linux-amd64" && \
 chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/rodalies-cli
 ```
 
@@ -28,7 +30,7 @@ chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.2.0/rodalies-cli-darwin-amd64" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.2.1/rodalies-cli-darwin-amd64" && \
 chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bin/rodalies-cli
 ```
 
@@ -39,7 +41,7 @@ chmod +x rodalies-cli-darwin-amd64 && mv rodalies-cli-darwin-amd64 /usr/local/bi
 Run the following command to get the binary into your bin folder or tune it as you like:
 
 ```bash
-curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.2.0/rodalies-cli-windows-amd64.exe" && \
+curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.2.1/rodalies-cli-windows-amd64.exe" && \
 chmod +x rodalies-cli-windows-amd64.exe && mv rodalies-cli-windows-amd64.exe /mingw64/bin/rodalies-cli.exe
 ```
 
@@ -131,7 +133,7 @@ $ rodalies-cli -d 9 -m 9
 ```bash
 $ rodalies-cli -s gir
 🚂 Rodalies CLI 📅 Today's date is 02/08/2022
-✅ You are running the latest rodalies-cli, version 1.2.0! yayy
+✅ You are running the latest rodalies-cli, version 1.2.1! yayy
 ✨ Interactive mode enabled: 'false'
 🔍 Searching stations that contain the text: 'gir'
 +--------------+------------+
@@ -142,7 +144,7 @@ $ rodalies-cli -s gir
 
 $ rodalies-cli -s si
 🚂 Rodalies CLI 📅 Today's date is 02/08/2022
-✅ You are running the latest rodalies-cli, version 1.2.0! yayy
+✅ You are running the latest rodalies-cli, version 1.2.1! yayy
 ✨ Interactive mode enabled: 'false'
 🔍 Searching stations that contain the text: 'si'
 +------------------------+------------+
@@ -159,7 +161,7 @@ $ rodalies-cli -s si
 ```bash
 $ rodalies-cli -f 79300 -t 79202
 🚂 Rodalies CLI 📅 Today's date is 02/08/2022
-✅ You are running the latest rodalies-cli, version 1.2.0! yayy
+✅ You are running the latest rodalies-cli, version 1.2.1! yayy
 ✨ Interactive mode enabled: 'false'
 🔍 Searching timetable for date 02/08/2022
 📆 Listing timetable with 0 transfers
@@ -208,7 +210,7 @@ If the timetable requires a transfer you will also see it:
 ```bash
 $ rodalies-cli -f 79300 -t 71701
 🚂 Rodalies CLI 📅 Today's date is 02/08/2022
-✅ You are running the latest rodalies-cli, version 1.2.0! yayy
+✅ You are running the latest rodalies-cli, version 1.2.1! yayy
 ✨ Interactive mode enabled: 'false'
 🔍 Searching timetable for date 02/08/2022
 📆 Listing timetable with 1 transfers
@@ -249,7 +251,7 @@ $ rodalies-cli -f 79300 -t 71701
 ```bash
 $ rodalies-cli -f 79300 -t 72503
 🚂 Rodalies CLI 📅 Today's date is 02/08/2022
-✅ You are running the latest rodalies-cli, version 1.2.0! yayy
+✅ You are running the latest rodalies-cli, version 1.2.1! yayy
 ✨ Interactive mode enabled: 'false'
 🔍 Searching timetable for date 02/08/2022
 📆 Listing timetable with 2 transfers

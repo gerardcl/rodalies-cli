@@ -1,6 +1,17 @@
-name: Continuous integration
+name: CICD
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - 'main'
+    tags:
+      - '*'
+  pull_request:
+    branches: [ 'main' ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   check:
