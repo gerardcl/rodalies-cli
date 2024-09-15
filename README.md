@@ -23,8 +23,6 @@ curl -LO "https://github.com/gerardcl/rodalies-cli/releases/download/1.2.3/rodal
 chmod +x rodalies-cli-linux-amd64 && mv rodalies-cli-linux-amd64 /usr/local/bin/rodalies-cli
 ```
 
-**NOTE** you will need libssl or openssl development packages installed.
-
 * MacOS
 
 Run the following command to get the binary into your bin folder or tune it as you like:
