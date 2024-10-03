@@ -1,6 +1,6 @@
+use chrono::{Datelike, Local};
 use std::error::Error;
 
-use chrono::{Datelike, Local};
 use rodalies_cli::config::check::check_rodalies_version;
 use rodalies_cli::config::cli::{init_cli, interactive_mode};
 use rodalies_cli::rodalies::client::init_client;

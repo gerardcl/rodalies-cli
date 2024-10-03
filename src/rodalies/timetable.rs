@@ -73,7 +73,7 @@ pub async fn search_timetable_input(
     let parsed_html = get_timetable_page(client, from, to, date).await?;
 
     // check, show and fail if displayed errors
-    let selector_errors = &Selector::parse(r#".error_contingut > p"#).unwrap();
+    let selector_errors = &Selector::parse(r#".error_contingut > p"#)?;
     let errors: Vec<&str> = parsed_html
         .select(selector_errors)
         .flat_map(|el| el.text())
