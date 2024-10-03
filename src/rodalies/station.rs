@@ -10,7 +10,7 @@ use crate::{
 };
 
 /// The Station information struct
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Station {
     /// The internal ID of the station name, that is provided by the rodalies site. It is the value used when submitting a search.
     pub id: String,
@@ -22,7 +22,7 @@ pub struct Station {
 pub async fn get_stations_list(client: &Client) -> Result<Vec<Station>, Box<dyn Error>> {
     let parsed_html = get_search_page(client).await?;
 
-    let selector = &Selector::parse(r#"#origen > option"#).unwrap();
+    let selector = &Selector::parse(r#"#origen > option"#)?;
 
     let station_id: Vec<&str> = parsed_html
         .select(selector)
